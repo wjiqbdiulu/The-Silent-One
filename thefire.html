@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE FIRE — The Silent One</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #07060b; color: #d4d0e0;
+      font-family: 'Courier New', monospace;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    .crt-scanlines {
+      position: fixed; inset: 0; pointer-events: none; z-index: 900;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 3px);
+    }
+    .crt-vignette {
+      position: fixed; inset: 0; pointer-events: none; z-index: 899;
+      background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.75) 100%);
+    }
+
+    .nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 28px;
+      border-bottom: 1px solid rgba(138,90,186,0.15);
+      background: rgba(7,6,11,0.95);
+    }
+    .nav-title { color: #8a5aba; font-size: 18px; letter-spacing: 4px; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link {
+      color: #666; text-decoration: none; font-size: 12px;
+      letter-spacing: 1px; transition: color 0.3s; cursor: pointer;
+    }
+    .nav-link:hover { color: #c4a0e8; }
+
+    .hero { text-align: center; padding: 50px 20px 20px; }
+    .hero-title {
+      font-size: 42px; color: #8a5aba; letter-spacing: 8px;
+      text-shadow: 0 0 30px rgba(138,90,186,0.4), 0 0 60px rgba(138,90,186,0.15);
+    }
+    .hero-sub { font-size: 13px; color: #555; letter-spacing: 3px; margin-top: 8px; }
+
+    .section { max-width: 700px; margin: 30px auto; padding: 0 20px; }
+    .section-title {
+      font-size: 16px; color: #8a5aba; letter-spacing: 4px;
+      margin-bottom: 16px; border-bottom: 1px solid rgba(138,90,186,0.15);
+      padding-bottom: 8px;
+    }
+    .section-body { font-size: 13px; color: #888; line-height: 1.8; }
+
+    .verse-card {
+      background: rgba(15,12,20,0.8); border: 1px solid rgba(138,90,186,0.15);
+      border-radius: 8px; padding: 16px 20px; margin-bottom: 12px;
+      transition: border-color 0.3s;
+    }
+    .verse-card:hover { border-color: rgba(138,90,186,0.35); }
+    .verse-text { font-size: 13px; color: #aaa; font-style: italic; line-height: 1.6; }
+    .verse-ref { font-size: 11px; color: #8a5aba; margin-top: 8px; letter-spacing: 2px; }
+
+    .doctrine-list { list-style: none; padding: 0; }
+    .doctrine-list li {
+      background: rgba(15,12,20,0.6); border-left: 3px solid #8a5aba;
+      padding: 14px 18px; margin-bottom: 10px; border-radius: 0 6px 6px 0;
+      font-size: 13px; color: #999; line-height: 1.7;
+    }
+    .doctrine-list li strong { color: #c4a0e8; }
+    .doctrine-list li em { color: #666; font-size: 11px; }
+
+    .resource-card {
+      background: rgba(15,12,20,0.8); border: 1px solid rgba(138,90,186,0.15);
+      border-radius: 8px; padding: 16px 20px; margin-bottom: 12px;
+    }
+    .resource-name { font-size: 14px; color: #c4a0e8; letter-spacing: 2px; margin-bottom: 4px; }
+    .resource-desc { font-size: 12px; color: #666; line-height: 1.6; }
+    .resource-link {
+      display: inline-block; margin-top: 8px;
+      color: #8a5aba; font-size: 11px; letter-spacing: 1px;
+      text-decoration: none; border-bottom: 1px solid rgba(138,90,186,0.3);
+      transition: color 0.3s;
+    }
+    .resource-link:hover { color: #c4a0e8; }
+
+    .footer {
+      text-align: center; padding: 40px 20px; margin-top: 30px;
+      border-top: 1px solid rgba(138,90,186,0.1);
+    }
+    .footer-verse { font-size: 12px; color: #444; font-style: italic; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+    .footer-ref { font-size: 10px; color: #333; margin-top: 6px; letter-spacing: 2px; }
+  </style>
+</head>
+<body>
+
+  <div class="crt-scanlines"></div>
+  <div class="crt-vignette"></div>
+
+  <div class="nav">
+    <div class="nav-title">THE SILENT ONE</div>
+    <div class="nav-links">
+      <a class="nav-link" href="index.html">LOBBY</a>
+      <a class="nav-link" href="thefire.html">THE FIRE</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-title">THE FIRE</div>
+    <div class="hero-sub">SCRIPTURE · DOCTRINE · HELP</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">✝️ SCRIPTURE</div>
+    <div class="verse-card">
+      <div class="verse-text">"Your eyes saw my unformed body; all the days ordained for me were written in your book before one of them came to be."</div>
+      <div class="verse-ref">— PSALM 139:16</div>
+    </div>
+    <div class="verse-card">
+      <div class="verse-text">"Before I formed you in the womb I knew you, before you were born I set you apart."</div>
+      <div class="verse-ref">— JEREMIAH 1:5</div>
+    </div>
+    <div class="verse-card">
+      <div class="verse-text">"Nothing in all creation is hidden from God's sight. Everything is uncovered and laid bare before the eyes of Him to whom we must give account."</div>
+      <div class="verse-ref">— HEBREWS 4:13</div>
+    </div>
+    <div class="verse-card">
+      <div class="verse-text">"He chose us in Him before the foundation of the world, that we should be holy and blameless before Him."</div>
+      <div class="verse-ref">— EPHESIANS 1:4</div>
+    </div>
+    <div class="verse-card">
+      <div class="verse-text">"Indeed, the very hairs of your head are all numbered. Don't be afraid."</div>
+      <div class="verse-ref">— LUKE 12:7</div>
+    </div>
+    <div class="verse-card">
+      <div class="verse-text">"Are not two sparrows sold for a penny? Yet not one of them will fall to the ground outside your Father's care."</div>
+      <div class="verse-ref">— MATTHEW 10:29</div>
+    </div>
+    <div class="verse-card">
+      <div class="verse-text">"Can a mother forget the baby at her breast and have no compassion on the child she has borne? Though she may forget, I will not forget you!"</div>
+      <div class="verse-ref">— ISAIAH 49:15</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">👁️ GOD'S OMNISCIENCE</div>
+    <div class="section-body" style="margin-bottom: 16px;">
+      He knew you before you existed. He sees every moment at once — past, present, future, all present to God. And He still sat you at the table.
+    </div>
+    <ul class="doctrine-list">
+      <li><strong>He knew you before you existed.</strong> "Your eyes saw my unformed body; all the days ordained for me were written in your book before one of them came to be." — Psalm 139:16 <br><em>The Fire teaches: He was already writing your story before your first breath.</em></li>
+      <li><strong>He knows everything — simultaneously.</strong> Not like watching a movie. He sees every moment at once. Past, present, future — all present to God. <br><em>— CCC 600</em></li>
+      <li><strong>He knows every card you'll ever be dealt.</strong> Every hand, every fold, every bluff, every river card — already known. And He still sat you at the table.</li>
+      <li><strong>He knows the hairs on your head.</strong> Matthew 10:30. Not approximately. Exactly. That's how detailed His knowledge of you is.</li>
+      <li><strong>Nothing is hidden from Him.</strong> "Everything is uncovered and laid bare before the eyes of Him to whom we must give account." — Hebrews 4:13</li>
+      <li><strong>His knowledge doesn't erase your choice.</strong> This is the mystery. God knowing what you'll choose doesn't mean He chose for you. You're still in the hand. You still decide. <br><em>— Romans 9</em></li>
+      <li><strong>He wrote your name before the world began.</strong> "He chose us in Him before the foundation of the world." — Ephesians 1:4-5. The Book of Life isn't written at the end. It was written at the beginning.</li>
+      <li><strong>Foreknowledge is not pre-programming.</strong> God knowing the outcome ≠ God forcing the outcome. A parent watching a child touch a stove knows what will happen. The child still chose.</li>
+      <li><strong>This should terrify you — and comfort you.</strong> He knows your worst moment. Every sin. Every secret. And He still sent His Son. That's not surveillance. That's love with full information.</li>
+      <li><strong>You cannot surprise God.</strong> Not with your failures. Not with your doubts. Not with your questions about omniscience at 2 AM. He's not disappointed. He's not scrambling. He knew.</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">📜 ROMANS 9 — THE HARDEST CHAPTER</div>
+    <div class="verse-card">
+      <div class="verse-text">"Not only that, but Rebekah's children were conceived by one man, our father Isaac. Yet, before the twins were born or had done anything good or bad — in order that God's purpose in election might stand: not by works but by Him who calls — she was told, 'The older will serve the younger.' Just as it is written: 'Jacob I loved, but Esau I hated.'"</div>
+      <div class="verse-ref">— ROMANS 9:10-13</div>
+    </div>
+    <div class="verse-card">
+      <div class="verse-text">"One of you will say to me: 'Then why does God still blame us? For who is able to resist His will?' But who are you, a human being, to talk back to God? Shall what is formed say to the one who formed it, 'Why did you make me like this?'"</div>
+      <div class="verse-ref">— ROMANS 9:19-20</div>
+    </div>
+    <div class="section-body" style="margin-top: 12px;">
+      This chapter is where most people walk away. Predestination. Election. God choosing before birth. It's the hardest teaching in Scripture. The Fire doesn't pretend it's easy. It sits with the weight of it — and finds that the weight is not crushing. It's humbling.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🛡️ HELP — YOU ARE NOT ALONE</div>
+    <div class="resource-card">
+      <div class="resource-name">NATIONAL PROBLEM GAMBLING HELPLINE</div>
+      <div class="resource-desc">Free, confidential, 24/7. Call or text 1-800-522-4700.</div>
+      <a class="resource-link" href="tel:18005224700">CALL NOW →</a>
+    </div>
+    <div class="resource-card">
+      <div class="resource-name">GAMBLERS ANONYMOUS</div>
+      <div class="resource-desc">Fellowship of men and women who share their experience, strength, and hope.</div>
+      <a class="resource-link" href="https://www.gamblersanonymous.org" target="_blank" rel="noreferrer">VISIT SITE →</a>
+    </div>
+    <div class="resource-card">
+      <div class="resource-name">SAMHSA NATIONAL HELPLINE</div>
+      <div class="resource-desc">Free, confidential, 24/7 treatment referral and information. 1-800-662-4357.</div>
+      <a class="resource-link" href="tel:18006624357">CALL NOW →</a>
+    </div>
+    <div class="resource-card">
+      <div class="resource-name">ST. JUDE CHILDREN'S RESEARCH HOSPITAL</div>
+      <div class="resource-desc">All profits from The Silent One go directly to St. Jude. No splits. No middlemen.</div>
+      <a class="resource-link" href="https://www.stjude.org" target="_blank" rel="noreferrer">VISIT ST. JUDE →</a>
+    </div>
+    <div class="resource-card">
+      <div class="resource-name">CATHOLIC ANSWERS</div>
+      <div class="resource-desc">Questions about the faith? About predestination? About why God lets bad things happen? Start here.</div>
+      <a class="resource-link" href="https://www.catholic.com" target="_blank" rel="noreferrer">VISIT SITE →</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-verse">"For I know the plans I have for you," declares the Lord, "plans to prosper you and not to harm you, plans to give you hope and a future."</div>
+    <div class="footer-ref">— JEREMIAH 29:11</div>
+  </div>
+
+</body>
+</html>

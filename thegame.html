@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE TABLE — The Silent One</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #07060b; color: #d4d0e0;
+      font-family: 'Courier New', monospace;
+      min-height: 100vh; overflow-x: hidden;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .crt-scanlines {
+      position: fixed; inset: 0; pointer-events: none; z-index: 900;
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 3px);
+    }
+    .crt-vignette {
+      position: fixed; inset: 0; pointer-events: none; z-index: 899;
+      background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.75) 100%);
+    }
+
+    .top-bar {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 28px;
+      border-bottom: 1px solid rgba(138,90,186,0.15);
+      background: rgba(7,6,11,0.95);
+    }
+    .top-title { color: #8a5aba; font-size: 16px; letter-spacing: 4px; }
+    .top-links { display: flex; gap: 24px; }
+    .top-link {
+      color: #666; text-decoration: none; font-size: 11px;
+      letter-spacing: 1px; transition: color 0.3s; cursor: pointer;
+    }
+    .top-link:hover { color: #c4a0e8; }
+    .top-info { font-size: 11px; color: #555; letter-spacing: 2px; }
+
+    .table-area {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 20px; position: relative;
+    }
+    .poker-table {
+      width: 700px; height: 400px;
+      background: radial-gradient(ellipse at center, #1a1520 0%, #0d0a12 100%);
+      border: 3px solid rgba(138,90,186,0.2);
+      border-radius: 50%; position: relative;
+      box-shadow: 0 0 60px rgba(138,90,186,0.08), inset 0 0 40px rgba(0,0,0,0.5);
+    }
+    .table-felt-label {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      color: rgba(138,90,186,0.08); font-size: 14px; letter-spacing: 6px;
+      pointer-events: none;
+    }
+
+    .seat {
+      position: absolute; width: 100px; text-align: center;
+    }
+    .seat-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 2px solid rgba(138,90,186,0.3); margin: 0 auto 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; background: rgba(15,12,20,0.8);
+    }
+    .seat-name { font-size: 10px; color: #8a5aba; letter-spacing: 2px; }
+    .seat-chips { font-size: 9px; color: #555; letter-spacing: 1px; margin-top: 2px; }
+    .seat-cards {
+      display: flex; gap: 4px; justify-content: center; margin-top: 6px;
+    }
+    .card-mini {
+      width: 32px; height: 44px; background: #1a1520;
+      border: 1px solid rgba(138,90,186,0.3); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #aaa;
+    }
+    .card-mini.face-down {
+      background: linear-gradient(135deg, #2a1f3a, #1a1520);
+      border-color: rgba(138,90,186,0.15);
+    }
+    .seat.folded { opacity: 0.3; }
+    .seat.active .seat-avatar { border-color: #8a5aba; box-shadow: 0 0 15px rgba(138,90,186,0.3); }
+
+    .seat-0 { top: 85%; left: 50%; transform: translateX(-50%); }
+    .seat-1 { top: 50%; left: -5%; transform: translateY(-50%); }
+    .seat-2 { top: 10%; left: 50%; transform: translateX(-50%); }
+    .seat-3 { top: 50%; right: -5%; transform: translateY(-50%); }
+
+    .community-cards {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      display: flex; gap: 8px;
+    }
+    .card-community {
+      width: 48px; height: 66px; background: #1a1520;
+      border: 1px solid rgba(138,90,186,0.3); border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #c4a0e8;
+    }
+    .card-community.empty {
+      border-style: dashed; border-color: rgba(138,90,186,0.1);
+      color: transparent;
+    }
+
+    .pot-display {
+      position: absolute; top: 42%; left: 50%; transform: translateX(-50%);
+      font-size: 13px; color: #c4a0e8; letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(196,160,232,0.3);
+    }
+
+    .action-bar {
+      width: 100%; max-width: 700px; padding: 16px 20px;
+      display: flex; align-items: center; gap: 12px;
+      justify-content: center; flex-wrap: wrap;
+    }
+    .action-btn {
+      background: rgba(15,12,20,0.8); border: 1px solid rgba(138,90,186,0.25);
+      color: #8a5aba; font-family: 'Courier New', monospace;
+      font-size: 12px; letter-spacing: 2px; padding: 12px 24px;
+      border-radius: 6px; cursor: pointer; transition: all 0.3s;
+    }
+    .action-btn:hover {
+      border-color: #8a5aba; background: rgba(138,90,186,0.1);
+    }
+    .action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .action-btn.all-in { border-color: #e85a5a; color: #e85a5a; }
+    .action-btn.all-in:hover { background: rgba(232,90,90,0.1); }
+
+    .raise-slider {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .raise-slider input[type="range"] {
+      width: 120px; accent-color: #8a5aba;
+    }
+    .raise-amount { font-size: 12px; color: #c4a0e8; letter-spacing: 1px; min-width: 50px; }
+
+    .status-line {
+      width: 100%; text-align: center; padding: 10px;
+      font-size: 12px; color: #555; letter-spacing: 2px;
+    }
+
+    .winner-overlay {
+      position: fixed; inset: 0; background: rgba(7,6,11,0.92);
+      display: none; align-items: center; justify-content: center;
+      flex-direction: column; z-index: 500;
+    }
+    .winner-overlay.show { display: flex; }
+    .winner-text {
+      font-size: 28px; color: #8a5aba; letter-spacing: 6px;
+      text-shadow: 0 0 30px rgba(138,90,186,0.4);
+      margin-bottom: 12px;
+    }
+    .winner-hand {
+      font-size: 14px; color: #666; letter-spacing: 2px; margin-bottom: 20px;
+    }
+    .winner-amount {
+      font-size: 18px; color: #c4a0e8; letter-spacing: 3px; margin-bottom: 30px;
+    }
+    .winner-btn {
+      background: rgba(15,12,20,0.8); border: 1px solid rgba(138,90,186,0.3);
+      color: #8a5aba; font-family: 'Courier New', monospace;
+      font-size: 12px; letter-spacing: 3px; padding: 14px 36px;
+      border-radius: 6px; cursor: pointer; transition: all 0.3s;
+    }
+    .winner-btn:hover { border-color: #8a5aba; background: rgba(138,90,186,0.1); }
+
+    #wisdom-line {
+      position: fixed; bottom: 20px; left: 0; right: 0;
+      text-align: center; font-size: 13px; color: #8a5aba;
+      letter-spacing: 2px; font-family: 'Courier New', monospace;
+      font-style: italic; opacity: 0;
+      transition: opacity 1.5s ease-in-out;
+      pointer-events: none; z-index: 100;
+      text-shadow: 0 0 15px rgba(138,90,186,0.4);
+    }
+    #wisdom-line.visible { opacity: 1; }
+
+    .footer-game {
+      width: 100%; text-align: center; padding: 12px;
+      border-top: 1px solid rgba(138,90,186,0.08);
+      font-size: 9px; color: #222; letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="crt-scanlines"></div>
+  <div class="crt-vignette"></div>
+
+  <div class="top-bar">
+    <div class="top-title">THE SILENT ONE</div>
+    <div class="top-info" id="player-info">PLAYER — 1,000 DUST</div>
+    <div class="top-links">
+      <a class="top-link" href="index.html">LOBBY</a>
+      <a class="top-link" href="thefire.html">THE FIRE</a>
+    </div>
+  </div>
+
+  <div class="table-area">
+    <div class="poker-table">
+      <div class="table-felt-label">THE SILENT ONE</div>
+
+      <div class="seat seat-0" id="seat-0">
+        <div class="seat-avatar" id="avatar-0">🕯️</div>
+        <div class="seat-name" id="name-0">YOU</div>
+        <div class="seat-chips" id="chips-0">1,000</div>
+        <div class="seat-cards" id="cards-0"></div>
+      </div>
+      <div class="seat seat-1" id="seat-1">
+        <div class="seat-avatar" id="avatar-1">☢️</div>
+        <div class="seat-name" id="name-1">NUCLEOID</div>
+        <div class="seat-chips" id="chips-1">1,000</div>
+        <div class="seat-cards" id="cards-1"></div>
+      </div>
+      <div class="seat seat-2" id="seat-2">
+        <div class="seat-avatar" id="avatar-2">👑</div>
+        <div class="seat-name" id="name-2">MATRIARCH</div>
+        <div class="seat-chips" id="chips-2">1,000</div>
+        <div class="seat-cards" id="cards-2"></div>
+      </div>
+      <div class="seat seat-3" id="seat-3">
+        <div class="seat-avatar" id="avatar-3">🐍</div>
+        <div class="seat-name" id="name-3">SNAKE</div>
+        <div class="seat-chips" id="chips-3">1,000</div>
+        <div class="seat-cards" id="cards-3"></div>
+      </div>
+
+      <div class="community-cards" id="community">
+        <div class="card-community empty">?</div>
+        <div class="card-community empty">?</div>
+        <div class="card-community empty">?</div>
+        <div class="card-community empty">?</div>
+        <div class="card-community empty">?</div>
+      </div>
+
+      <div class="pot-display" id="pot-display">POT: 0</div>
+    </div>
+  </div>
+
+  <div class="status-line" id="status-line">DEALING...</div>
+
+  <div class="action-bar" id="action-bar">
+    <button class="action-btn" id="btn-fold" onclick="playerAction('fold')">FOLD</button>
+    <button class="action-btn" id="btn-check" onclick="playerAction('check')">CHECK</button>
+    <button class="action-btn" id="btn-call" onclick="playerAction('call')">CALL</button>
+    <div class="raise-slider">
+      <input type="range" id="raise-slider" min="0" max="1000" value="100">
+      <span class="raise-amount" id="raise-amount">100</span>
+    </div>
+    <button class="action-btn" id="btn-raise" onclick="playerAction('raise')">RAISE</button>
+    <button class="action-btn all-in" id="btn-allin" onclick="playerAction('allin')">ALL IN</button>
+  </div>
+
+  <div class="winner-overlay" id="winner-overlay">
+    <div class="winner-text" id="winner-name">WINNER</div>
+    <div class="winner-hand" id="winner-hand">HAND</div>
+    <div class="winner-amount" id="winner-amount">+0 DUST</div>
+    <button class="winner-btn" onclick="nextHand()">NEXT HAND</button>
+  </div>
+
+  <div id="wisdom-line"></div>
+
+  <div class="footer-game">PSALM 139:16 — ALL THE DAYS ORDAINED FOR ME WERE WRITTEN IN YOUR BOOK</div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const playerName = params.get('name') || 'PLAYER';
+    const playerChar = params.get('char') || 'silent';
+
+    const charMap = {
+      nucleoid: { icon: '☢️', name: 'NUCLEOID' },
+      matriarch: { icon: '👑', name: 'MATRIARCH' },
+      rebel: { icon: '🔥', name: 'REBEL' },
+      sax: { icon: '🎷', name: 'SAX' },
+      silent: { icon: '🕯️', name: 'SILENT ONE' },
+      flanders: { icon: '🌿', name: 'FLANDERS' },
+      industrialist: { icon: '⚙️', name: 'INDUSTRIALIST' },
+      clown: { icon: '🃏', name: 'CLOWN' },
+      chief: { icon: '🪶', name: 'CHIEF' },
+      merchant: { icon: '💰', name: 'MERCHANT' },
+      snake: { icon: '🐍', name: 'SNAKE' },
+      sage: { icon: '📖', name: 'SAGE' }
+    };
+
+    const pChar = charMap[playerChar] || charMap.silent;
+    document.getElementById('avatar-0').textContent = pChar.icon;
+    document.getElementById('name-0').textContent = playerName.toUpperCase();
+    document.getElementById('player-info').textContent = `${playerName.toUpperCase()} — ${loadDust().toLocaleString()} DUST`;
+
+    function loadDust() {
+      let d = localStorage.getItem('silentone_dust');
+      if (d === null) { d = 1000; localStorage.setItem('silentone_dust', d); }
+      return parseInt(d);
+    }
+    function saveDust(v) { localStorage.setItem('silentone_dust', v); }
+
+    const slider = document.getElementById('raise-slider');
+    const raiseDisplay = document.getElementById('raise-amount');
+    slider.addEventListener('input', () => { raiseDisplay.textContent = slider.value; });
+
+    function playerAction(action) {
+      const amount = action === 'raise' ? parseInt(slider.value) : 0;
+      console.log(`Player action: ${action}, amount: ${amount}`);
+    }
+
+    function nextHand() {
+      document.getElementById('winner-overlay').classList.remove('show');
+    }
+
+    const wisdomLines = [
+      "He knew you before you existed.",
+      "He knows every card you'll ever be dealt. And He still sat you at the table.",
+      "Nothing is hidden from His sight.",
+      "He knows the hairs on your head. Not approximately. Exactly.",
+      "His knowledge doesn't erase your choice.",
+      "He wrote your name before the world began.",
+      "Foreknowledge is not pre-programming. You still choose.",
+      "He knows your worst moment. And He still sent His Son.",
+      "You cannot surprise God. Not with failures. Not with doubts.",
+      "All the days ordained for me were written in Your book before one of them came to be."
+    ];
+    let wisdomIndex = 0;
+    const wisdomEl = document.getElementById('wisdom-line');
+    function showNextWisdom() {
+      if (!wisdomEl) return;
+      wisdomEl.textContent = wisdomLines[wisdomIndex];
+      wisdomEl.classList.add('visible');
+      setTimeout(() => { wisdomEl.classList.remove('visible'); }, 6000);
+      wisdomIndex = (wisdomIndex + 1) % wisdomLines.length;
+    }
+    setTimeout(() => {
+      showNextWisdom();
+      setInterval(showNextWisdom, 12000);
+    }, 3000);
+
+    function checkLockout() {
+      const now = new Date();
+      const ctHour = new Date(now.toLocaleString('en-US', { timeZone: 'America/Chicago' })).getHours();
+      if (ctHour >= 0 && ctHour < 6) {
+        document.body.innerHTML = `
+          <div style="position:fixed;inset:0;background:#07060b;display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:1000">
+            <div style="color:#8a5aba;font-size:20px;letter-spacing:4px;text-align:center;line-height:2;font-family:'Courier New',monospace">
+              THE TABLE IS CLOSED<br><br>MIDNIGHT — 6:00 AM CT<br><br>GO TO SLEEP. GOD SEES YOU.
+            </div>
+            <div style="color:#444;font-size:12px;font-style:italic;margin-top:20px;letter-spacing:1px;font-family:'Courier New',monospace">
+              "He who watches over you will not slumber." — Psalm 121:3
+            </div>
+          </div>`;
+        return true;
+      }
+      return false;
+    }
+    checkLockout();
+  </script>
+</body>
+</html>
